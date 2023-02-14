@@ -15,7 +15,7 @@ const { postMethod, deleteMethodCloud, getTodoCloud, putMethod, deleteAllCloud }
 const { getTodoLocal, createTodoLocal, editTodoLocal, deleteTodoLocal, deleteAllLocal } = localStore()
 const { clearAllTasks, handlePageRefresh, setTaskToList, switchBetweenStorage, } = appController()
 const { showEmptyInputError, prepareTask } = view()
-console.log(this)
+
 handlePageRefresh()
 
 export function appController() {
