@@ -38,7 +38,7 @@ export function cloudStore(){
             return await result.json()
         },
 
-        putMethod : function (index, editedValue, isComplete=false) {
+        putMethod : function (index, editedValue, isComplete = false) {
             return setTodoCloud(`${todoApiURL}/${index}`,
                 new OptionObject("PUT",new TodoItem(editedValue,isComplete,index),optionHeader))
         },

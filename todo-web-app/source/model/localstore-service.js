@@ -1,6 +1,6 @@
 import { TodoItem } from "../utils/todo-item.js"
 
-// let { getTodoLocal, setTodoLocal, returnRequireObject} = localStore()
+let { getTodoLocal, setTodoLocal, returnRequireObject} = localStore()
 
 export function localStore() {
     return {
@@ -13,25 +13,25 @@ export function localStore() {
         },
 
         createTodoLocal : function (value) {
-            const existingList = this.getTodoLocal()
+            const existingList = getTodoLocal()
             existingList.push(new TodoItem(value))
-            this.setTodoLocal(existingList)
+            setTodoLocal(existingList)
         },
 
         editTodoLocal : function (previousValue, newValue, isComplete = false) {
-            const existingList = this.getTodoLocal()
+            const existingList = getTodoLocal()
             existingList.splice(existingList.indexOf(returnRequireObject(previousValue,existingList)), 1, new TodoItem(newValue,isComplete))
-            this.setTodoLocal(existingList)
+            setTodoLocal(existingList)
         },
 
         deleteTodoLocal : function (value) {
-            const existingList = this.getTodoLocal()
+            const existingList = getTodoLocal()
             existingList.splice(existingList.indexOf(returnRequireObject(value,existingList)), 1)
             setTodoLocal(existingList)
         },
 
         deleteAllLocal : function () {
-            this.setTodoLocal([])
+            setTodoLocal([])
         },
         
         returnRequireObject : function(value,existingList){

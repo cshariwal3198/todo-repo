@@ -28,11 +28,10 @@ export function view(){
             return editButton
         },
 
-        createCheckBox : function(event,value){
+        createCheckBox : function(event,value,span){
             let check = createNewElement("input")
             check.type = "checkbox"
-            adjustCheckValue(check,value)
-            check.addEventListener(event,()=>varifyCheck(check,value))
+            check.addEventListener(event,()=>varifyCheck(check,value), adjustCheckValue(check,span,value))
             return check
         },
 
@@ -40,7 +39,7 @@ export function view(){
             let paraBlock = createNewElement("p")
             let span = createNewElement("span",value.name)
             appendToParent(paraBlock,span)
-            appendToParent(paraBlock,createCheckBox("change",value))
+            appendToParent(paraBlock,createCheckBox("change",value,span))
             appendToParent(paraBlock,getEditButton("click",span,value))
             appendToParent(paraBlock,getDeleteButton("click",value))
             appendToParent(divToDisplay,paraBlock)
@@ -61,10 +60,8 @@ export function view(){
             }
         },
 
-        adjustCheckValue : function(check,value){
-            value.isCompleted ? 
-            (check.checked = true,console.log(check.parentNode.firstChild))
-            : check.checked = false
+        adjustCheckValue : function(check,span,value){
+            value.isCompleted && (check.checked = true, span.style.textDecoration = "line-through" || "none")
         }
 
     }

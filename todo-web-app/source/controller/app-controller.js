@@ -1,7 +1,7 @@
 import { view } from "../view/view-todo.js";
+import { TodoItem } from "../utils/todo-item.js"
 import { cloudStore } from "../model/cloudstore-service.js"
 import { localStore } from "../model/localstore-service.js";
-import { TodoItem } from "../utils/todo-item.js"
 
 const taskInput = document.querySelector(".form-input")
 const divToDisplay = document.querySelector(".div-to-display")
@@ -33,13 +33,12 @@ export function appController() {
             }
         },
 
-        handlePageRefresh: function () {
+        handlePageRefresh: async function () {
             lsGet = localStorage.getItem("storage");
-            console.log(this);
-            let tasks = lsGet === "CloudStorage" ? getTodoCloud() : getTodoLocal()
-                (tasks || [])?.map((task) => {
-                    prepareTask(task)
-                })
+            let tasks = (lsGet === "CloudStorage") ? await getTodoCloud() : getTodoLocal()
+            tasks.map((task) => {
+                prepareTask(task)
+            })
             store.innerText = lsGet
         },
 
@@ -92,10 +91,12 @@ export function appController() {
 
         varifyCheck: async function (check, value) {
             if (check.checked === true) {
-                lsGet === "CloudStorage" ? putMethod(value.id, value.name, true) : editTodoLocal(value.name, value.name, true)
+                lsGet === "CloudStorage" ? putMethod(value.id, value.name, true)
+                    : editTodoLocal(value.name, value.name, true)
                 check.parentElement.style.textDecoration = "line-through"
             } else {
-                lsGet === "CloudStorage" ? putMethod(value.id, value.name, false) : editTodoLocal(value.name, value.name, false)
+                lsGet === "CloudStorage" ? putMethod(value.id, value.name, false)
+                    : editTodoLocal(value.name, value.name, false)
                 check.parentElement.style.textDecoration = "none"
             }
         }
