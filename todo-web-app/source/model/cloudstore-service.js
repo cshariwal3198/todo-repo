@@ -10,17 +10,18 @@ const optionHeader = {
     "Content-type": "application/json",
 }
 
-let {OptionObject, setTodoCloud} = cloudStore()
+function OptionObject(method,body,header){
+    return {
+        method : method,
+        body : JSON.stringify(body),
+        headers: header,
+    }
+}
+
+let { setTodoCloud } = cloudStore()
 
 export function cloudStore(){
     return {
-        OptionObject : function(method,body,header){
-            return {
-                method : method,
-                body : JSON.stringify(body),
-                headers: header,
-            }
-        },
 
         getTodoCloud: async function(){
             let result = await fetch(todoApiURL);

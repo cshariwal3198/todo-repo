@@ -1,6 +1,6 @@
 import { TodoItem } from "../utils/todo-item.js"
 
-let { getTodoLocal, setTodoLocal, returnRequireObject} = localStore()
+let { getTodoLocal, setTodoLocal } = localStore()
 
 export function localStore() {
     return {
@@ -32,14 +32,15 @@ export function localStore() {
 
         deleteAllLocal : function () {
             setTodoLocal([])
-        },
-        
-        returnRequireObject : function(value,existingList){
-            for(let elem of existingList){
-                if(elem.name === value){
-                    return elem
-                }
-            }
+        }
+
+    }
+}
+
+function returnRequireObject(value,existingList){
+    for(let elem of existingList){
+        if(elem.name === value){
+            return elem
         }
     }
 }

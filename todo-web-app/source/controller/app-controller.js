@@ -13,57 +13,12 @@ localStorage.setItem("storage", localStorage.getItem("storage") || "CloudStorage
 
 const { postMethod, deleteMethodCloud, getTodoCloud, putMethod, deleteAllCloud } = cloudStore()
 const { getTodoLocal, createTodoLocal, editTodoLocal, deleteTodoLocal, deleteAllLocal } = localStore()
-const { clearAllTasks, handlePageRefresh, setTaskToList, switchBetweenStorage, } = appController()
 const { showEmptyInputError, prepareTask } = view()
 
 handlePageRefresh()
 
 export function appController() {
     return {
-        setTaskToList: async function (event) {
-            event.preventDefault()
-            let inputValue = taskInput.value;
-            if (showEmptyInputError() && lsGet === "CloudStorage") {
-                let postResult = await postMethod(inputValue)
-                postResult && prepareTask(postResult)
-
-            } else if (showEmptyInputError() && lsGet === "LocalStorage") {
-                createTodoLocal(inputValue)
-                prepareTask(new TodoItem(inputValue))
-            }
-        },
-
-        handlePageRefresh: async function () {
-            lsGet = localStorage.getItem("storage");
-            let tasks = (lsGet === "CloudStorage") ? await getTodoCloud() : getTodoLocal()
-            tasks.map((task) => {
-                prepareTask(task)
-            })
-            store.innerText = lsGet
-        },
-
-        switchBetweenStorage: function () {
-            if (confirm(`You are switching your default Storage. Press Ok to proceed`)) {
-                localStorage.getItem("storage") === "CloudStorage" ? localStorage.setItem("storage", "LocalStorage")
-                    : localStorage.setItem("storage", "CloudStorage");
-                divToDisplay.innerHTML = ""
-                handlePageRefresh()
-                store.innerText = lsGet
-            }
-        },
-
-        clearAllTasks: async function () {
-            let result = confirm("Your all tasks will be erased, Continue?")
-            if (result) {
-                if (localStorage.getItem("storage") === "CloudStorage") {
-                    let deleteResponse = await deleteAllCloud()
-                    deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
-                } else {
-                    deleteAllLocal()
-                    divToDisplay.innerHTML = ""
-                }
-            }
-        },
 
         deleteSingleTask: async function (parentElement, value) {
             if (localStorage.getItem("storage") === "CloudStorage") {
@@ -99,6 +54,51 @@ export function appController() {
                     : editTodoLocal(value.name, value.name, false)
                 check.parentElement.style.textDecoration = "none"
             }
+        }
+    }
+}
+
+async function setTaskToList(event) {
+    event.preventDefault()
+    let inputValue = taskInput.value;
+    if (showEmptyInputError() && lsGet === "CloudStorage") {
+        let postResult = await postMethod(inputValue)
+        postResult && prepareTask(postResult)
+
+    } else if (showEmptyInputError() && lsGet === "LocalStorage") {
+        createTodoLocal(inputValue)
+        prepareTask(new TodoItem(inputValue))
+    }
+}
+
+async function handlePageRefresh() {
+    lsGet = localStorage.getItem("storage");
+    let tasks = (lsGet === "CloudStorage") ? await getTodoCloud() : getTodoLocal()
+    tasks.map((task) => {
+        prepareTask(task)
+    })
+    store.innerText = lsGet
+}
+
+function switchBetweenStorage() {
+    if (confirm(`You are switching your default Storage. Press Ok to proceed`)) {
+        localStorage.getItem("storage") === "CloudStorage" ? localStorage.setItem("storage", "LocalStorage")
+            : localStorage.setItem("storage", "CloudStorage");
+        divToDisplay.innerHTML = ""
+        handlePageRefresh()
+        store.innerText = lsGet
+    }
+}
+
+async function clearAllTasks() {
+    let result = confirm("Your all tasks will be erased, Continue?")
+    if (result) {
+        if (localStorage.getItem("storage") === "CloudStorage") {
+            let deleteResponse = await deleteAllCloud()
+            deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
+        } else {
+            deleteAllLocal()
+            divToDisplay.innerHTML = ""
         }
     }
 }
