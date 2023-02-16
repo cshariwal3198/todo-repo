@@ -18,28 +18,26 @@ function OptionObject(method,body,header){
     }
 }
 
-let { setTodoCloud } = cloudStore()
+const { setTodoCloud } = cloudStore()
 
 export function cloudStore(){
     return {
 
         getTodoCloud: async function(){
-            let result = await fetch(todoApiURL);
-            return await result.json();
+            return (await fetch(todoApiURL)).json()
         },
 
         setTodoCloud : async function (apiURL, options) {
             try {
                 return await fetch(apiURL, options)
             } catch (error) {
-                console.log("error occured")
+                console.log("Something went wrong...!!")
             }
         },
 
         postMethod : async function(value){
-            let result = await setTodoCloud(todoApiURL,new OptionObject("POST",
-                new TodoItem(value),optionHeader))
-            return await result.json()
+            return (await setTodoCloud(todoApiURL,new OptionObject("POST",
+                new TodoItem(value),optionHeader))).json()
         },
 
         putMethod : function (index, editedValue, isComplete = false) {

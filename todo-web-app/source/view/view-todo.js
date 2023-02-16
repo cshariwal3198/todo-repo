@@ -65,5 +65,11 @@ function appendToParent(parent, child) {
 }
 
 function adjustCheckValue(check, span, value) {
-    value.isCompleted && (check.checked = true, span.style.textDecoration = "line-through" || "none")
+    if (value.isCompleted) {
+        check.checked = true
+        span.style.textDecoration = "line-through"
+    } else {
+        check.checked = false
+        span.style.textDecoration = "none"
+    }
 }

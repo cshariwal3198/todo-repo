@@ -91,8 +91,7 @@ function switchBetweenStorage() {
 }
 
 async function clearAllTasks() {
-    let result = confirm("Your all tasks will be erased, Continue?")
-    if (result) {
+    if (confirm("Your all tasks will be erased, Continue?")) {
         if (localStorage.getItem("storage") === "CloudStorage") {
             let deleteResponse = await deleteAllCloud()
             deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
