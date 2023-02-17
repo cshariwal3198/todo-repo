@@ -19,15 +19,11 @@ handlePageRefresh()
 
 export function appController() {
     return {
-
-        deleteSingleTask: async function (parentElement, value) {
-            if (localStorage.getItem("storage") === "CloudStorage") {
+        deleteSingleTask: function (parentElement, value) {
+            actualExecutionFunction(async () => {
                 let result = await deleteMethodCloud(value.id)
-                if (result.status === 204) {
-                    divToDisplay.removeChild(parentElement)
-                }
-            } else { deleteTodoLocal(value.name), divToDisplay.removeChild(parentElement) }
-
+                result.status === 204 && divToDisplay.removeChild(parentElement)
+            }, () => { deleteTodoLocal(value.name), divToDisplay.removeChild(parentElement) })
         },
 
         editSelectedTask: function (editButton, span, index) {
@@ -39,51 +35,46 @@ export function appController() {
             } else {
                 editButton.innerText = "Edit"
                 span.contentEditable = false
-                localStorage.getItem("storage") === "CloudStorage" ? putMethod(index, span.innerText)
-                    : editTodoLocal(previousSpanValue, span.innerText)
+                actualExecutionFunction(() => { putMethod(index, span.innerText) },
+                    () => { editTodoLocal(previousSpanValue, span.innerText) })
             }
         },
 
         varifyCheck: async function (check, value) {
             if (check.checked === true) {
-                lsGet === "CloudStorage" ? putMethod(value.id, value.name, true)
-                    : editTodoLocal(value.name, value.name, true)
+                actualExecutionFunction(() => { putMethod(value.id, value.name, true) },
+                    () => { editTodoLocal(value.name, value.name, true) })
                 check.parentElement.style.textDecoration = "line-through"
             } else {
-                lsGet === "CloudStorage" ? putMethod(value.id, value.name, false)
-                    : editTodoLocal(value.name, value.name, false)
+                actualExecutionFunction(() => { putMethod(value.id, value.name, false) },
+                    () => { editTodoLocal(value.name, value.name, false) })
                 check.parentElement.style.textDecoration = "none"
             }
         }
     }
 }
 
-async function setTaskToList(event) {
+function setTaskToList(event) {
     event.preventDefault()
     let inputValue = taskInput.value;
-    if (showEmptyInputError() && lsGet === "CloudStorage") {
+    showEmptyInputError() && actualExecutionFunction(async () => {
         let postResult = await postMethod(inputValue)
         postResult && prepareTask(postResult)
-
-    } else if (showEmptyInputError() && lsGet === "LocalStorage") {
-        createTodoLocal(inputValue)
-        prepareTask(new TodoItem(inputValue))
-    }
+    }, () => { createTodoLocal(inputValue), prepareTask(new TodoItem(inputValue))})
 }
 
 async function handlePageRefresh() {
     lsGet = localStorage.getItem("storage");
     let tasks = (lsGet === "CloudStorage") ? await getTodoCloud() : getTodoLocal()
-    tasks.map((task) => {
-        prepareTask(task)
-    })
+    tasks.map((task) => prepareTask(task))
     store.innerText = lsGet
 }
 
 function switchBetweenStorage() {
     if (confirm(`You are switching your default Storage. Press Ok to proceed`)) {
-        localStorage.getItem("storage") === "CloudStorage" ? localStorage.setItem("storage", "LocalStorage")
-            : localStorage.setItem("storage", "CloudStorage");
+        actualExecutionFunction(() => { localStorage.setItem("storage", "LocalStorage") },
+            () => { localStorage.setItem("storage", "CloudStorage") })
+
         divToDisplay.innerHTML = ""
         handlePageRefresh()
         store.innerText = lsGet
@@ -92,14 +83,16 @@ function switchBetweenStorage() {
 
 async function clearAllTasks() {
     if (confirm("Your all tasks will be erased, Continue?")) {
-        if (localStorage.getItem("storage") === "CloudStorage") {
+        actualExecutionFunction(async () => {
             let deleteResponse = await deleteAllCloud()
             deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
-        } else {
-            deleteAllLocal()
-            divToDisplay.innerHTML = ""
-        }
+        }, 
+        () => { deleteAllLocal(), divToDisplay.innerHTML = ""})
     }
+}
+
+function actualExecutionFunction(callback1, callback2) {
+    localStorage.getItem("storage") === "CloudStorage" ? callback1() : callback2()
 }
 
 document.querySelector("form").addEventListener("submit", setTaskToList)
