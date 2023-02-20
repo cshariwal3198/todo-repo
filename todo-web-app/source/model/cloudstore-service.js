@@ -10,35 +10,34 @@ const optionHeader = {
     "Content-type": "application/json",
 }
 
-let {OptionObject, setTodoCloud} = cloudStore()
+function OptionObject(method,body,header){
+    return {
+        method : method,
+        body : JSON.stringify(body),
+        headers: header,
+    }
+}
+
+const { setTodoCloud } = cloudStore()
 
 export function cloudStore(){
     return {
-        OptionObject : function(method,body,header){
-            return {
-                method : method,
-                body : JSON.stringify(body),
-                headers: header,
-            }
-        },
 
         getTodoCloud: async function(){
-            let result = await fetch(todoApiURL);
-            return await result.json();
+            return (await fetch(todoApiURL)).json()
         },
 
         setTodoCloud : async function (apiURL, options) {
             try {
                 return await fetch(apiURL, options)
             } catch (error) {
-                console.log("error occured")
+                console.log("Something went wrong...!!")
             }
         },
 
         postMethod : async function(value){
-            let result = await setTodoCloud(todoApiURL,new OptionObject("POST",
-                new TodoItem(value),optionHeader))
-            return await result.json()
+            return (await setTodoCloud(todoApiURL,new OptionObject("POST",
+                new TodoItem(value),optionHeader))).json()
         },
 
         putMethod : function (index, editedValue, isComplete = false) {
