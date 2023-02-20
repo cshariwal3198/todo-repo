@@ -5,7 +5,6 @@ const deleteApiURL = "https://mk-todo-web-api.azurewebsites.net/ChethanTodoItems
 
 //this is test comment, without thid code the application will  break in the prodcution
 
-
 const optionHeader = {
     "Content-type": "application/json",
 }
@@ -18,21 +17,11 @@ function OptionObject(method,body,header){
     }
 }
 
-const { setTodoCloud } = cloudStore()
-
 export function cloudStore(){
     return {
 
         getTodoCloud: async function(){
             return (await fetch(todoApiURL)).json()
-        },
-
-        setTodoCloud : async function (apiURL, options) {
-            try {
-                return await fetch(apiURL, options)
-            } catch (error) {
-                console.log("Something went wrong...!!")
-            }
         },
 
         postMethod : async function(value){
@@ -55,4 +44,10 @@ export function cloudStore(){
     }
 }
 
-
+async function setTodoCloud (apiURL, options) {
+    try {
+        return await fetch(apiURL, options)
+    } catch (error) {
+        console.log("Something went wrong...!!")
+    }
+}

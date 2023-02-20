@@ -82,13 +82,13 @@ function switchBetweenStorage() {
 }
 
 async function clearAllTasks() {
-    if (confirm("Your all tasks will be erased, Continue?")) {
-        actualExecutionFunction(async () => {
-            let deleteResponse = await deleteAllCloud()
-            deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
-        }, 
-        () => { deleteAllLocal(), divToDisplay.innerHTML = ""})
-    }
+    confirm("Your all tasks will be erased, Continue?") && 
+    actualExecutionFunction(async () => {
+        let deleteResponse = await deleteAllCloud()
+        deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
+    },
+    () => { deleteAllLocal(), divToDisplay.innerHTML = "" })
+
 }
 
 function actualExecutionFunction(callback1, callback2) {
