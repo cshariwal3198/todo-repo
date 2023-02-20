@@ -37,7 +37,7 @@ export function view() {
 
 function createNewElement(elementName, text) {
     let newElement = document.createElement(elementName)
-    if (text) { newElement.innerText = text }
+    if (text) newElement.innerText = text ;
     return newElement;
 }
 

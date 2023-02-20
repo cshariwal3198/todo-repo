@@ -1,16 +1,8 @@
 import { TodoItem } from "../utils/todo-item.js"
 
-let { getTodoLocal, setTodoLocal } = localStore()
 
 export function localStore() {
     return {
-        getTodoLocal : function () {
-            return JSON.parse(localStorage.getItem("todo") || '[]')
-        },
-
-        setTodoLocal : function (taskValue) {
-            localStorage.setItem("todo", JSON.stringify(taskValue))
-        },
 
         createTodoLocal : function (value) {
             const existingList = getTodoLocal()
@@ -35,6 +27,14 @@ export function localStore() {
         }
 
     }
+}
+
+export function getTodoLocal() {
+    return JSON.parse(localStorage.getItem("todo") || [])
+}
+
+function setTodoLocal (taskValue) {
+    localStorage.setItem("todo", JSON.stringify(taskValue))
 }
 
 function returnRequireObject(value,existingList){

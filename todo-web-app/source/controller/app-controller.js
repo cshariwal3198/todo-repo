@@ -1,7 +1,7 @@
 import { view } from "../view/view-todo.js";
 import { TodoItem } from "../utils/todo-item.js"
 import { cloudStore } from "../model/cloudstore-service.js"
-import { localStore } from "../model/localstore-service.js";
+import { localStore, getTodoLocal } from "../model/localstore-service.js";
 
 const taskInput = document.querySelector(".form-input")
 const divToDisplay = document.querySelector(".div-to-display")
@@ -12,7 +12,7 @@ let lsGet;
 localStorage.setItem("storage", localStorage.getItem("storage") || "CloudStorage")
 
 const { postMethod, deleteMethodCloud, getTodoCloud, putMethod, deleteAllCloud } = cloudStore()
-const { getTodoLocal, createTodoLocal, editTodoLocal, deleteTodoLocal, deleteAllLocal } = localStore()
+const { createTodoLocal, editTodoLocal, deleteTodoLocal, deleteAllLocal } = localStore()
 const { showEmptyInputError, prepareTask } = view()
 
 handlePageRefresh()
@@ -21,7 +21,7 @@ export function appController() {
     return {
         deleteSingleTask: function (parentElement, value) {
             actualExecutionFunction(async () => {
-                let result = await deleteMethodCloud(value.id)
+                const result = await deleteMethodCloud(value.id)
                 result.status === 204 && divToDisplay.removeChild(parentElement)
             }, () => { deleteTodoLocal(value.name), divToDisplay.removeChild(parentElement) })
         },
@@ -56,11 +56,11 @@ export function appController() {
 
 function setTaskToList(event) {
     event.preventDefault()
-    let inputValue = taskInput.value;
+    const inputValue = taskInput.value;
     showEmptyInputError() && actualExecutionFunction(async () => {
-        let postResult = await postMethod(inputValue)
+        const postResult = await postMethod(inputValue)
         postResult && prepareTask(postResult)
-    }, () => { createTodoLocal(inputValue), prepareTask(new TodoItem(inputValue))})
+    }, () => { createTodoLocal(inputValue), prepareTask(new TodoItem(inputValue)) })
 }
 
 async function handlePageRefresh() {
@@ -82,13 +82,12 @@ function switchBetweenStorage() {
 }
 
 async function clearAllTasks() {
-    confirm("Your all tasks will be erased, Continue?") && 
-    actualExecutionFunction(async () => {
-        let deleteResponse = await deleteAllCloud()
-        deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
-    },
-    () => { deleteAllLocal(), divToDisplay.innerHTML = "" })
-
+    confirm("Your all tasks will be erased, Continue ?") &&
+        actualExecutionFunction(async () => {
+            let deleteResponse = await deleteAllCloud()
+            deleteResponse.status === 200 && (divToDisplay.innerHTML = "")
+        },
+            () => { deleteAllLocal(), divToDisplay.innerHTML = "" })
 }
 
 function actualExecutionFunction(callback1, callback2) {
