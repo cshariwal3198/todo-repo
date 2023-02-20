@@ -56,7 +56,8 @@ function getEditButton(event, span, value) {
 function createCheckBox(event, value, span) {
     let check = createNewElement("input")
     check.type = "checkbox"
-    check.addEventListener(event, () => varifyCheck(check, value), adjustCheckValue(check, span, value))
+    adjustCheckValue(check, span, value)
+    check.addEventListener(event, () => varifyCheck(check, value))
     return check
 }
 
